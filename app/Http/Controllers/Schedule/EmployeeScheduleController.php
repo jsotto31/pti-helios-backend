@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Schedule;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Schedule\EmployeeScheduleRequest;
+use App\Http\Requests\Schedule\EmployeeScheduleRequest as ScheduleEmployeeScheduleRequest;
 use Illuminate\Http\Request;
 use App\Models\Schedule\EmployeeSchedule;
 
@@ -46,7 +46,7 @@ class EmployeeScheduleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(EmployeeScheduleRequest $request)
+    public function store(ScheduleEmployeeScheduleRequest $request)
     {
         $employeeId = $request->input('employee_id');
         $schedules = $request->input('schedules');
@@ -102,7 +102,7 @@ class EmployeeScheduleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(EmployeeScheduleRequest $request, string $id)
+    public function update(ScheduleEmployeeScheduleRequest $request, string $id)
     {   
         //
     }
