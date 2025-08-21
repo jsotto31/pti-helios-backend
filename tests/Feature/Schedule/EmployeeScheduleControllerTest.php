@@ -5,12 +5,13 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Schedule\EmployeeSchedule;
+use PHPUnit\Framework\Attributes\Test;
 
 class EmployeeScheduleControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function it_returns_schedules_for_an_employee()
     {
         $employeeId = 123;
@@ -28,7 +29,7 @@ class EmployeeScheduleControllerTest extends TestCase
                  ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_when_no_schedules_found()
     {
         $response = $this->getJson('/api/employee-schedule?employee_id=999&date_effective=2025-08-01');
@@ -40,7 +41,7 @@ class EmployeeScheduleControllerTest extends TestCase
                  ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_store_and_return_schedule_records()
     {
         $payload = [
@@ -78,7 +79,7 @@ class EmployeeScheduleControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_schedules_by_employee_id()
     {
         $employeeId = 789;
@@ -100,7 +101,7 @@ class EmployeeScheduleControllerTest extends TestCase
                  ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_if_no_schedules_found_for_employee_id()
     {
         $response = $this->getJson("/api/employee-schedule/9999");

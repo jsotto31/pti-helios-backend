@@ -6,12 +6,13 @@ use App\Models\Schedule\ScheduleShift;
 use App\Models\Schedule\ScheduleShiftDetails;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ScheduleShiftDetailsControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function it_can_store_new_schedule_details()
     {
         $shift = ScheduleShift::factory()->create();
@@ -58,7 +59,7 @@ class ScheduleShiftDetailsControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_schedule_details_by_shift_id()
     {
         $shift = ScheduleShift::factory()->create();
@@ -80,7 +81,7 @@ class ScheduleShiftDetailsControllerTest extends TestCase
                  ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_if_schedule_not_found()
     {
         $response = $this->getJson('/api/schedule-shift-details/999');

@@ -6,12 +6,13 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Schedule\ScheduleShift;
 use App\Models\Schedule\ScheduleShiftDetails;
+use PHPUnit\Framework\Attributes\Test;
 
 class ScheduleShiftDetailsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function it_can_create_or_update_a_schedule_detail()
     {
         $shift = ScheduleShift::factory()->create();
