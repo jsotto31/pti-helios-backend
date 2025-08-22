@@ -22,7 +22,7 @@ class EmployeeScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'employee_id'    => 'required|string',
+            'employee_id'    => ['required', 'string', 'exists:users,employee_id'],
             'schedules'      => 'required|array',
             'schedules.*.day'            => 'required|string',
             'schedules.*.start'          => 'required|date_format:H:i:s',

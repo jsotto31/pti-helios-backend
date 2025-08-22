@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dtr\EmployeeAttendanceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OnlineApplication\CorrectionApplicationController;
 use App\Http\Controllers\OnlineApplication\LeaveApplicationController;
@@ -31,3 +32,4 @@ Route::apiResource('/upload-logs', UploadLogsController::class);
 Route::apiResource('/employee-schedule', EmployeeScheduleController::class);
 Route::apiResource('/schedule-shift', ScheduleShiftController::class);
 Route::apiResource('/schedule-shift-details', ScheduleShiftDetailsController::class);
+Route::apiResource('/employee-attendance', EmployeeAttendanceController::class);

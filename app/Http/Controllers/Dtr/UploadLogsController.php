@@ -32,7 +32,7 @@ class UploadLogsController extends Controller
     public function store(Request $request)
     {
         $maxRows = 5000;
-        $headers = ['person_id', 'time', 'device_id', 'site'];
+        $headers = ['employee_id', 'time', 'device_id', 'site'];
 
         // Validate file
         $validated = $request->validate([

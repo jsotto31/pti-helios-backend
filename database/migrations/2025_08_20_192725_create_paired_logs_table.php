@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('paired_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('person_id')->index();
+            $table->string('employee_id')->index();
+            $table->date('date')->nullable();
             $table->timestamp('time_in')->nullable();
             $table->timestamp('time_out')->nullable();
             $table->timestamps();

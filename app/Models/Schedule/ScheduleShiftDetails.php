@@ -27,13 +27,7 @@ class ScheduleShiftDetails extends Model
     public static function createOrUpdateByUniqueKeys(array $data){
         return static::updateOrCreate(
             [
-                'schedule_shift_id' => $data['schedule_shift_id'],
-                'day' => $data['day'],
-                'start' => $data['start'],
-                'end' => $data['end'],
-                'tardy_start' => $data['tardy_start'],
-                'absent_start' => $data['absent_start'],
-                'early_dismiss' => $data['early_dismiss']
+                'schedule_shift_id' => $data['schedule_shift_id']
             ],
 
             $data

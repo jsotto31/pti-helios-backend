@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('employee_schedules', function (Blueprint $table) {
             $table->id();
-            $table->string("employee_id")->nullable();
+            $table->string('employee_id')->references('employee_id')->on('users')->onDelete('cascade');
             $table->time("start")->nullable();
             $table->time("end")->nullable();
             $table->string("day")->nullable();

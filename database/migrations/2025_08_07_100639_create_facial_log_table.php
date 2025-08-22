@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('facial_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('person_id')->index();
+            $table->string('employee_id')->references('employee_id')->on('users')->onDelete('cascade');
             $table->dateTime('time');
             $table->string('site');
             $table->string('device_id');

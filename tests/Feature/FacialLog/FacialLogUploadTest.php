@@ -17,7 +17,7 @@
 
             // Sample CSV content
             $csvContent = <<<CSV
-    person_id,time,device_id,site
+    employee_id,time,device_id,site
     1,2025-08-01 12:00:00,ABC123,MainGate
     2,2025-08-02 14:00:00,XYZ456,BackDoor
     CSV;
@@ -60,7 +60,7 @@
 
         public function test_upload_fails_if_too_many_rows()
         {
-            $rows = "person_id,time,device_id,site\n";
+            $rows = "employee_id,time,device_id,site\n";
             for ($i = 0; $i < 5001; $i++) {
                 $rows .= "1,2025-08-01 12:00:00,ABC123,MainGate\n";
             }
@@ -88,7 +88,7 @@
         public function test_csv_row_is_parsed_correctly()
         {
             $row = ['1', '2025-08-01 12:00:00', 'ABC123', 'MainGate'];
-            $headers = ['person_id', 'time', 'device_id', 'site'];
+            $headers = ['employee_id', 'time', 'device_id', 'site'];
 
             $data = array_combine($headers, $row);
             $data['time'] = date('Y-m-d H:i:s', strtotime($data['time']));

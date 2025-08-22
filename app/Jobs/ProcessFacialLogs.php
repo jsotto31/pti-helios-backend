@@ -24,27 +24,32 @@ class ProcessFacialLogs implements ShouldQueue
     {
         // Use transaction to keep data consistent
         DB::transaction(function () {
-            // Get person_ids that have at least 2 unprocessed logs
-            $personIds = FacialLog::select('person_id')
+            // Get employee_ids that have at least 2 unprocessed logs
+            $employeeIds = FacialLog::select('employee_id')
                 ->where('processed', 0)
-                ->groupBy('person_id')
+                ->groupBy('employee_id')
                 ->havingRaw('COUNT(*) >= 2')
-                ->pluck('person_id');
+                ->pluck('employee_id');
 
-            foreach ($personIds as $personId) {
+            foreach ($employeeIds as $employeeId) {
                 // Get two earliest unprocessed logs for this person
-                $logs = FacialLog::where('person_id', $personId)
+                $logs = FacialLog::where('employee_id', $employeeId)
                     ->where('processed', 0)
                     ->orderBy('time')
                     ->limit(2)
                     ->get();
 
                 if ($logs->count() == 2) {
+                    $date = date("Y-m-d", strtotime($logs[0]->time));
+                    $from = $logs[0]->time;
+                    $to = $logs[1]->time;
+
                     // Create paired log
                     PairedLog::create([
-                        'person_id' => $personId,
-                        'time_in' => $logs[0]->time,
-                        'time_out' => $logs[1]->time,
+                        'employee_id' => $employeeId,
+                        'date' => $date,
+                        'time_in' => $from,
+                        'time_out' => $to,
                     ]);
 
                     // Mark the logs as processed

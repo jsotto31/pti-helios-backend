@@ -20,19 +20,22 @@ class ScheduleShiftDetailsTest extends TestCase
         $data = [
             'schedule_shift_id' => $shift->id,
             'day' => 'Friday',
-            'start_time' => '08:00:00',
-            'end_time' => '16:00:00',
+            'start' => '08:00:00',
+            'end' => '16:00:00',
+            'tardy_start' => '16:00:00',
+            'absent_start' => '16:00:00',
+            'early_dismiss' => '16:00:00'
         ];
 
         $created = ScheduleShiftDetails::createOrUpdateByUniqueKeys($data);
         $this->assertTrue($created->wasRecentlyCreated);
 
         $updatedData = array_merge($data, [
-            'end_time' => '17:00:00',
+            'end' => '17:00:00',
         ]);
 
         $updated = ScheduleShiftDetails::createOrUpdateByUniqueKeys($updatedData);
         $this->assertFalse($updated->wasRecentlyCreated);
-        $this->assertEquals('17:00:00', $updated->end_time);
+        $this->assertEquals('17:00:00', $updated->end);
     }
 }

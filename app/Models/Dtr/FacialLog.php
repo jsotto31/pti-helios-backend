@@ -9,5 +9,5 @@ class FacialLog extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['person_id', 'time', 'site', 'device_id', 'processed'];
+    protected $fillable = ['employee_id', 'time', 'site', 'device_id', 'processed'];
 }

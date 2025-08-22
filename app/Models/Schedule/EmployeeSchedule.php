@@ -37,6 +37,13 @@ class EmployeeSchedule extends Model
         return $query;
     }
 
+    public function scopeEffectiveForDate($query, $employeeId, $date)
+    {
+        return $query->where('employee_id', $employeeId)
+                    ->whereDate('date_effective', '<=', $date)
+                    ->orderByDesc('date_effective');
+    }
+
     public static function createOrUpdateByUniqueKeys(array $data){
         return static::updateOrCreate(
             [
