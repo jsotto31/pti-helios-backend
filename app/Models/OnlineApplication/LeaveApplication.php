@@ -3,11 +3,12 @@
 namespace App\Models\OnlineApplication;
 
 use App\Queries\LeaveApplicationQuery;
+use App\Traits\Approvable;
 use Illuminate\Database\Eloquent\Model;
 
 class LeaveApplication extends Model
 {
-    use LeaveApplicationQuery;
+    use LeaveApplicationQuery, Approvable;
 
     protected $fillable = [
         "employee_id",     // foreign key → employees table
@@ -30,6 +31,8 @@ class LeaveApplication extends Model
         'allow_approver' => 'boolean',
         'with_pay'       => 'boolean',
     ];
+
+    public $type = 'leave_application';
 
     public static function getFilteredData($request)
     {

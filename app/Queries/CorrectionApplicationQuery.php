@@ -24,8 +24,8 @@ trait CorrectionApplicationQuery
                 });
             })
             ->with(['items'])
-            ->when($request->date_from, fn($query) => $query->whereDate('correction_applications.date', '>=', date("Y-m-d", strtotime($request->date_from))))
-            ->when($request->date_to, fn($query) => $query->whereDate('correction_applications.date', '<=', date("Y-m-d", strtotime($request->date_to))))
+            ->when($request->date_from, fn($query) => $query->whereDate('correction_applications.created_at', '>=', date("Y-m-d", strtotime($request->date_from))))
+            ->when($request->date_to, fn($query) => $query->whereDate('correction_applications.created_at', '<=', date("Y-m-d", strtotime($request->date_to))))
             ->when($request->status, fn($query) => $query->where('correction_applications.status', $request->status))
             ->when($request->employee_id, fn($query) => $query->where('correction_applications.employee_id', $request->employee_id))
             ->when($sortBy, fn($q) => $q->orderBy($sortBy['key'], $sortBy['order']))

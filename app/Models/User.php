@@ -3,6 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\OnlineApplication\ApprovalSequenceSetupItem;
+use App\Traits\Approvable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -79,5 +82,9 @@ class User extends Authenticatable
         if($type != 'employee') $prefix = "HR-";
 
         return $prefix . $datePrefix . str_pad($number, 3, '0', STR_PAD_LEFT);
+    }
+
+    public function approval_sequence_setup_items(){
+        return $this->hasMany(ApprovalSequenceSetupItem::class, 'employee_id', 'employee_id');
     }
 }

@@ -2,23 +2,21 @@
 
 namespace App\Models\OnlineApplication;
 
-use App\Queries\ObApplicationQuery;
+use App\Queries\ChangeScheduleApplicationQuery;
 use App\Traits\Approvable;
 use Illuminate\Database\Eloquent\Model;
 
-class ObApplication extends Model
+class ChangeScheduleApplication extends Model
 {
-    use ObApplicationQuery, Approvable;
-
+    use ChangeScheduleApplicationQuery, Approvable;
 
     protected $fillable = [
         "employee_id",     // foreign key → employees table
         "created_by",      // foreign key → users table
         "date_from",       // ISO date (start)
         "date_to",         // ISO date (end)
-        "time_from",       
-        "time_to",         
-        "type",            // string (e.g. "sick leave")
+        "date",            // ISO date (end)
+        "type",            // string (e.g permanent, temporary)
         "reason",          // text
         "allow_approver",  // boolean
         "status",          // string (e.g. pending, approved, rejected)
@@ -27,15 +25,17 @@ class ObApplication extends Model
     protected $casts = [
         'date_from' => 'date:Y-m-d',
         'date_to'   => 'date:Y-m-d',
-        'time_from'   => 'date:H:i',
-        'time_to'   => 'date:H:i',
+        'date'   => 'date:Y-m-d',
         'created_at' => 'date:Y-m-d',
         'updated_at'   => 'date:Y-m-d',
         'allow_approver' => 'boolean',
     ];
 
-    public static function getFilteredData($request)
-    {
+    public function items(){
+        return $this->hasMany(ChangeScheduleApplicationItem::class);
+    }
+
+    public static function getFilteredData($request){
         return self::fetch($request);
     }
 }

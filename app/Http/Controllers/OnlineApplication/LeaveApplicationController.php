@@ -14,6 +14,14 @@ class LeaveApplicationController extends Controller
     }
 
     public function store(LeaveApplicationRequest $request){
+
+        if(!LeaveApplication::hasApproverSetup($request->employee_id, 'leave_application')){
+            return response()->json([
+                'message' => 'No approval sequence setup found for this application.',
+                'errors' => []
+            ], 422);
+        }
+
         $leave_application = LeaveApplication::create([
             ...$request->only(["employee_id",
                 "type",
@@ -27,7 +35,16 @@ class LeaveApplicationController extends Controller
             'date_to' => date('Y-m-d', strtotime($request->date_to))
         ]);
 
+        $approver_sequence_items = $leave_application->createApproverSequence($request->employee_id, 'leave_application');
+
+        $leave_application = $leave_application->toArray();
+        $leave_application['approver_sequence_items'] = $approver_sequence_items;
+
         return response($leave_application, 201);
+    }
+
+    public function cancel(Request $requst, LeaveApplication $leaveApplication){
+        $leaveApplication->cancel();
     }
 
     public function update(LeaveApplication $leaveApplication, LeaveApplicationRequest $request){

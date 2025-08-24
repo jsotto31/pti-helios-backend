@@ -14,8 +14,20 @@ class CorrectionApplicationController extends Controller
     }
 
     public function store(CorrectionApplicationRequest $request){
+        if(!CorrectionApplication::hasApproverSetup($request->employee_id, 'correction_application')){
+            return response()->json([
+                'message' => 'No approval sequence setup found for this application.',
+                'errors' => []
+            ], 422);
+        }
+
         $correction_application = CorrectionApplication::create($request->only(['employee_id', 'date', 'reason', 'allow_approver', 'created_by']));
         $correction_application->items()->createMany($request->items);
+
+        $approver_sequence_items = $correction_application->createApproverSequence($request->employee_id, 'correction_application');
+
+        $correction_application = $correction_application->toArray();
+        $correction_application['approver_sequence_items'] = $approver_sequence_items;
 
         return response($correction_application, 201);
     }

@@ -2,39 +2,39 @@
 
 namespace App\Queries;
 
-use App\Models\OnlineApplication\LeaveApplication;
+use App\Models\OnlineApplication\ChangeScheduleApplication;
 
-trait LeaveApplicationQuery
+trait ChangeScheduleApplicationQuery
 {
     public static function fetch($request)
     {
         $sortBy = urldecode($request->sortBy);
         $sortBy = json_decode($sortBy, true);
 
-        $leave_application = LeaveApplication::query()
+        $change_schedule_applications = ChangeScheduleApplication::query()
             ->select([
-                "leave_applications.*",
+                "change_schedule_applications.*",
                 "users.name"
             ])
-            ->leftJoin('users', 'users.employee_id', '=', 'leave_applications.employee_id')
+            ->leftJoin('users', 'users.employee_id', '=', 'change_schedule_applications.employee_id')
             ->when($request->search, function ($query) use ($request) {
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where("name", "like", "%$search%");
                 });
             })
-            ->when($request->date_from, fn($query) => $query->whereDate('leave_applications.created_at', '>=', date("Y-m-d", strtotime($request->date_from))))
-            ->when($request->date_to, fn($query) => $query->whereDate('leave_applications.created_at', '<=', date("Y-m-d", strtotime($request->date_to))))
-            ->when($request->status, fn($query) => $query->where('leave_applications.status', $request->status))
-            ->when($request->employee_id, fn($query) => $query->where('leave_applications.employee_id', $request->employee_id))
-            ->when($request->type, fn($query) => $query->where('leave_applications.type', $request->type))
+            ->with(['items'])
+            ->when($request->date_from, fn($query) => $query->whereDate('change_schedule_applications.created_at', '>=', date("Y-m-d", strtotime($request->date_from))))
+            ->when($request->date_to, fn($query) => $query->whereDate('change_schedule_applications.created_at', '<=', date("Y-m-d", strtotime($request->date_to))))
+            ->when($request->type, fn($query) => $query->where('change_schedule_applications.type', $request->type))
+            ->when($request->status, fn($query) => $query->where('change_schedule_applications.status', $request->status))
+            ->when($request->employee_id, fn($query) => $query->where('change_schedule_applications.employee_id', $request->employee_id))
             ->when($sortBy, fn($q) => $q->orderBy($sortBy['key'], $sortBy['order']))
             ->paginate($request->itemPerPage ?? 10);
 
+        $change_schedule_applications = $change_schedule_applications->toArray();
 
-        $leave_application = $leave_application->toArray();
-
-        $leave_application['headers'] = [
+        $change_schedule_applications['headers'] = [
             [
                 "title" => "Action",
                 "key" => "action",
@@ -54,26 +54,26 @@ trait LeaveApplicationQuery
                 "sortable" => true,
             ],
             [
-                "title" => "Leave Type",
+                "title" => "Date",
+                "key" => "date",
+                "align" => "start",
+                "sortable" => true,
+            ],
+            [
+                "title" => "Type",
                 "key" => "type",
-                "align" => "start",
-                "sortable" => true,
-            ],
-            [
-                "title" => "From Date",
-                "key" => "date_from",
-                "align" => "start",
-                "sortable" => true,
-            ],
-            [
-                "title" => "To Date",
-                "key" => "date_to",
                 "align" => "start",
                 "sortable" => true,
             ],
             [
                 "title" => "Status",
                 "key" => "status",
+                "align" => "start",
+                "sortable" => true,
+            ],
+            [
+                "title" => "Details",
+                "key" => "details",
                 "align" => "start",
                 "sortable" => true,
             ],
@@ -86,6 +86,6 @@ trait LeaveApplicationQuery
             
         ];
 
-        return $leave_application;
+        return $change_schedule_applications;
     }
 }

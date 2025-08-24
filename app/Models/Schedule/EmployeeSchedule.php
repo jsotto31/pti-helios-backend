@@ -20,6 +20,15 @@ class EmployeeSchedule extends Model
         'date_effective',
     ];
 
+    protected $casts = [
+        'start'   => 'date:H:i',
+        'end'   => 'date:H:i',
+        'tardy_start'   => 'date:H:i',
+        'absent_start'   => 'date:H:i',
+        'early_dismiss'   => 'date:H:i',
+        'date_effective'   => 'date:H:i',
+    ];
+
     public static function newFactory()
     {
         return EmployeeScheduleFactory::new();

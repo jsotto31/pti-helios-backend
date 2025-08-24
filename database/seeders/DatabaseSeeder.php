@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Joshua Sotto',
-        //     'email' => 'joshua@example.com',
-        //     'password' => Hash::make("a"),
-        // ]);
+        User::factory()->create([
+            'name' => 'Joshua Sotto',
+            'email' => 'joshua@example.com',
+            'password' => Hash::make("a"),
+        ]);
 
         // $user = User::find(1);
         // $token = $user->createToken('api-token')->plainTextToken;

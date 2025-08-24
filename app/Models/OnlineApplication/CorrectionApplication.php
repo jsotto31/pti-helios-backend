@@ -3,11 +3,12 @@
 namespace App\Models\OnlineApplication;
 
 use App\Queries\CorrectionApplicationQuery;
+use App\Traits\Approvable;
 use Illuminate\Database\Eloquent\Model;
 
 class CorrectionApplication extends Model
 {
-    use CorrectionApplicationQuery;
+    use CorrectionApplicationQuery, Approvable;
     
     protected $fillable = [
         "employee_id",     

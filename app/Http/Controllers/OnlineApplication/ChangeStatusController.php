@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Controllers\OnlineApplication;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ChangeStatusController extends Controller
+{
+    /**
+     * Handle the incoming request.
+     */
+    public function __invoke(Request $request)
+    {
+        $list_item = $request->approver_list_items;
+        $currentApproverIndex = collect($request->approver_list_items)->search(fn($item) => $item['can_approve']);
+        $currentApprover = $list_item[$currentApproverIndex];
+        $list_item[$currentApproverIndex]['can_approve'] = 0;
+
+        $application = $currentApprover['application_type']::find($currentApprover['application_id']);
+        
+        if($currentApprover['status'] == 'approved' && $currentApprover['last_approver']){
+            $application->status = 'approved';
+            $application->save();
+        }else if($currentApprover['status'] == 'disapproved'){
+            $application->status = 'disapproved';
+            $application->save();
+        }else if ($currentApprover['status'] == 'pending'){
+            return response()->json([
+                    'message' => 'The selected status is invalid, please try again.',
+                    'errors' => [
+                        'status' => ['The request is still pending approval.'],
+                    ],
+            ], 422);
+        }else{
+            $list_item[$currentApproverIndex + 1]['can_approve'] = 1;
+        }
+
+        $application->approval_sequence_items()->delete();
+        $application->approval_sequence_items()->createMany($list_item);
+
+        return response(null, 200);
+    }
+}

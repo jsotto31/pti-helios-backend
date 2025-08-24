@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Schedule\EmployeeScheduleRequest as ScheduleEmployeeScheduleRequest;
 use Illuminate\Http\Request;
 use App\Models\Schedule\EmployeeSchedule;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class EmployeeScheduleController extends Controller
 {
@@ -36,14 +38,6 @@ class EmployeeScheduleController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(ScheduleEmployeeScheduleRequest $request)
@@ -71,12 +65,15 @@ class EmployeeScheduleController extends Controller
         ], 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-   public function show(Request $request, $employeeId)
+    public function show(Request $request, $employeeId)
     {   
-        $schedules = EmployeeSchedule::where("employee_id", $employeeId)->get();
+        $schedules = EmployeeSchedule::where("employee_id", $employeeId)
+                     ->when($request->date || $request->date_to || $request->date_from, function($query) use ($request){
+                        $query->whereDate('date_effective', '<=', $request->date ?? $request->date_to ?? $request->date_from)
+                        ->orderByRaw("FIELD(day, 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')")
+                        ->orderBy('date_effective', 'desc');
+                     })
+                     ->get();
 
         if($schedules->isEmpty()){
             return response()->json([
@@ -89,14 +86,6 @@ class EmployeeScheduleController extends Controller
             'status' => 'success',
             'data' => $schedules
         ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**

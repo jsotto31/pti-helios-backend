@@ -14,6 +14,13 @@ class ObApplicationController extends Controller
     }
 
     public function store(ObApplicationRequest $request){
+        if(!ObApplication::hasApproverSetup($request->employee_id, 'ob_application')){
+            return response()->json([
+                'message' => 'No approval sequence setup found for this application.',
+                'errors' => []
+            ], 422);
+        }
+
         $ob_application = ObApplication::create([
             ...$request->only(["employee_id",
                 "type",
@@ -28,6 +35,11 @@ class ObApplicationController extends Controller
             'time_from' => date('H:i:s', strtotime($request->time_from)),
             'time_to'   => date('H:i:s', strtotime($request->time_to))
         ]);
+
+        $approver_sequence_items = $ob_application->createApproverSequence($request->employee_id, 'ob_application');
+
+        $ob_application = $ob_application->toArray();
+        $ob_application['approver_sequence_items'] = $approver_sequence_items;
 
         return response($ob_application, 201);
     }

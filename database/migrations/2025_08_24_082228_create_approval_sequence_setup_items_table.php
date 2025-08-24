@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('approval_setup_items', function (Blueprint $table) {
+        Schema::create('approval_sequence_setup_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("approval_setup_id");
-            $table->foreignId("approver_id");
+            $table->string("employee_id");
+            $table->string("approver_id");
+            $table->string("type");
             $table->integer("sequence");
             $table->timestamps();
         });
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('approval_setup_items');
+        Schema::dropIfExists('approval_sequence_setup_items');
     }
 };

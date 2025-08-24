@@ -23,8 +23,8 @@ trait ObApplicationQuery
                     $q->where("name", "like", "%$search%");
                 });
             })
-            ->when($request->date_from, fn($query) => $query->whereDate('ob_applications.date_from', '>=', date("Y-m-d", strtotime($request->date_from))))
-            ->when($request->date_to, fn($query) => $query->whereDate('ob_applications.date_to', '<=', date("Y-m-d", strtotime($request->date_to))))
+            ->when($request->date_from, fn($query) => $query->whereDate('ob_applications.created_at', '>=', date("Y-m-d", strtotime($request->date_from))))
+            ->when($request->date_to, fn($query) => $query->whereDate('ob_applications.created_at', '<=', date("Y-m-d", strtotime($request->date_to))))
             ->when($request->status, fn($query) => $query->where('ob_applications.status', $request->status))
             ->when($request->employee_id, fn($query) => $query->where('ob_applications.employee_id', $request->employee_id))
             ->when($request->type, fn($query) => $query->where('ob_applications.type', $request->type))
