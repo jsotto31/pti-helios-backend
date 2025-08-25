@@ -84,8 +84,8 @@ trait OvertimeApplicationQuery
                 "sortable" => true,
             ],
             [
-                "title" => "Approving Authority",
-                "key" => "approving_authority",
+                "title" => "Date Created",
+                "key" => "created_at",
                 "align" => "start",
                 "sortable" => true,
             ],

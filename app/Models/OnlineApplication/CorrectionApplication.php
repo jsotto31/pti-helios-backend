@@ -20,6 +20,13 @@ class CorrectionApplication extends Model
         "status",          
     ];
 
+    protected $casts = [
+        'date' => 'date:Y-m-d',
+        'created_at' => 'date:Y-m-d',
+        'updated_at'   => 'date:Y-m-d',
+        'allow_approver' => 'boolean',
+    ];
+
     public function items(){
         return $this->hasMany(CorrectionApplicationItem::class);
     }
