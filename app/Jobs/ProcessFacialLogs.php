@@ -25,7 +25,7 @@ class ProcessFacialLogs implements ShouldQueue
         // Use transaction to keep data consistent
         DB::transaction(function () {
             // Get employee_ids that have at least 2 unprocessed logs
-            $employeeIds = FacialLog::UnprocessedLogs()->get();
+            $employeeIds = FacialLog::UnprocessedLogs();
 
             foreach ($employeeIds as $employeeId) {
                 // Get two earliest unprocessed logs for this person

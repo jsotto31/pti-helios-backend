@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Dtr\PairedLog;
 use App\Models\Schedule\EmployeeSchedule;
-use App\Services\AttendanceService;
+use Illuminate\Pipeline\Pipeline;
+
 
 class EmployeeAttendanceController extends Controller
 {
@@ -23,16 +24,13 @@ class EmployeeAttendanceController extends Controller
     public function getAttendance($employeeId, $fromDate, $toDate)
     {
         $logs = PairedLog::forLogsBetweenDates($employeeId, $fromDate, $toDate)->get();
-        $attendanceService = new AttendanceService();
 
         $attendance = [];
 
         foreach ($logs as $log) {
             $schedule = EmployeeSchedule::effectiveForDate($employeeId, $log->date)->first();
 
-            if ($schedule) {
-                $attendance[] = $attendanceService->calculate($log, $schedule);
-            } else {
+            if (!$schedule) {
                 $attendance[] = [
                     'employee_id' => $log->employee_id,
                     'date' => $log->date,
@@ -46,6 +44,15 @@ class EmployeeAttendanceController extends Controller
                     'undertime_seconds' => 0,
                     'status' => 'No Schedule',
                 ];
+            } else {
+                $result = app(PipeLine::class)
+                    ->send([$log, $schedule])
+                    ->through([
+                        \App\Pipelines\Attendance\EmployeeAttendance::class,
+                        \App\Pipelines\Attendance\EmployeeLeave::class
+                    ])
+                    ->thenReturn();
+                $attendance[] = $result;
             }
         }
 

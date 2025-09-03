@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('correction_application_items', function (Blueprint $table) {
             $table->id();
-            $table->foreginId("employee_id");
+            $table->foreignId("employee_id");
             $table->time("time_in")->nullable();
             $table->time("time_out")->nullable();
             $table->boolean("tardy")->default(false);
@@ -21,11 +21,7 @@ return new class extends Migration
             $table->boolean("early_dismiss")->default(false);
             $table->text("notes");
             $table->json("location");
-            $table->json("other_details")->default([
-                'device_id' => 'facial_recog_01',
-                'work_from_home' => 'work_from_home',
-                'overtime_hours' => 'overtime_hours',
-            ]);
+            $table->json("other_details")->nullable();
             $table->timestamps();
         });
     }

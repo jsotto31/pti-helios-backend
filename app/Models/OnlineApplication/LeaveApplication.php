@@ -38,4 +38,12 @@ class LeaveApplication extends Model
     {
         return self::fetch($request);
     }
+
+    public function scopeForEmployeeHasLeave($query, $employeeId, $date)
+    {
+        return $query->where('employee_id', $employeeId)
+                     ->where('status', 'approved')
+                     ->whereDate('date_from', '<=', $date)
+                     ->whereDate('date_to', '>=', $date);
+    }
 }
