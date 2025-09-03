@@ -37,6 +37,7 @@ class LeaveApplicationRequest extends FormRequest
     public function prepareForValidation() : void{
         $this->merge([
             'created_by' => $this->user()->employee_id,
+            'status'     => $this->allow_approver ? 'approved' : 'pending',
         ]);
     }
 }

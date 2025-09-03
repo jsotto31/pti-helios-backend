@@ -64,7 +64,6 @@ class LeaveApplicationController extends Controller
         return response($leaveApplication, 201);
     }
 
-
     public function destroy(LeaveApplication $leaveApplication){
         $leaveApplication->delete();
 

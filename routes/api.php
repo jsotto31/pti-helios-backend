@@ -10,6 +10,7 @@ use App\Http\Controllers\Schedule\ScheduleShiftController;
 use App\Http\Controllers\Schedule\ScheduleShiftDetailsController;
 use App\Http\Controllers\Dtr\UploadLogsController;
 use App\Http\Controllers\OnlineApplication\ApprovalSetupController;
+use App\Http\Controllers\OnlineApplication\BatchDestroyController;
 use App\Http\Controllers\OnlineApplication\ChangeScheduleApplicationController;
 use App\Http\Controllers\OnlineApplication\ChangeStatusController;
 use App\Http\Controllers\OnlineApplication\OvertimeController;
@@ -29,7 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::prefix("online-application")->group(function(){
         Route::apiResource("approval-setups", ApprovalSetupController::class);
         Route::post("change-status", ChangeStatusController::class);
-
+        Route::post("batch-destroy", BatchDestroyController::class);
 
         Route::apiResource("leave-applications", LeaveApplicationController::class);
         Route::post("leave-applications/e/cancel/{leave_application}", [LeaveApplicationController::class, 'cancel']);

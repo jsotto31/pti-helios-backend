@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\OnlineApplication;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OnlineApplication\ChangeStatusRequest;
 use Illuminate\Http\Request;
 
 class ChangeStatusController extends Controller
@@ -10,7 +11,7 @@ class ChangeStatusController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function __invoke(ChangeStatusRequest $request)
     {
         $list_item = $request->approver_list_items;
         $currentApproverIndex = collect($request->approver_list_items)->search(fn($item) => $item['can_approve']);

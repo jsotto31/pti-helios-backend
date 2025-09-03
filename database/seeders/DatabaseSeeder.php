@@ -14,16 +14,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
+        // User::factory(20)->create();
 
-        User::factory()->create([
-            'name' => 'Joshua Sotto',
-            'email' => 'joshua@example.com',
-            'password' => Hash::make("a"),
-        ]);
+        // User::factory()->create([
+        //     'name' => 'Joshua Sotto',
+        //     'email' => 'joshua@example.com',
+        //     'password' => Hash::make("a"),
+        // ]);
 
-        // $user = User::find(1);
-        // $token = $user->createToken('api-token')->plainTextToken;
-        // dd($token);
+        $user = User::find(1);
+        $token = $user->createToken('api-token')->plainTextToken;
+        dd($token);
+
+        // $this->call(DailyTimeRecordSeeder::class);
+        // $this->call(ApprovalSequenceSetupSeeder::class);
+        // $this->call(LeaveApplicationSeeder::class);
     }
 }

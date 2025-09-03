@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class OnlineApplicationSeeder extends Seeder
+class LeaveApplicationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,10 +15,7 @@ class OnlineApplicationSeeder extends Seeder
     public function run(): void
     {
         LeaveApplication::truncate();
-        $this->createLeaveApplication();
-    }
 
-    public function createLeaveApplication(){
         $leaveTypes = [
             'vacation-leave',
             'sick-leave',
@@ -36,7 +33,7 @@ class OnlineApplicationSeeder extends Seeder
                 $dateFrom = now()->subDays(rand(1, 60));
                 $dateTo = (clone $dateFrom)->addDays(rand(1, 5));
 
-                LeaveApplication::create([
+                $leave_application = LeaveApplication::create([
                     'employee_id'   => $user->employee_id,
                     'date_from'     => $dateFrom,
                     'date_to'       => $dateTo,
@@ -48,6 +45,8 @@ class OnlineApplicationSeeder extends Seeder
                     'status'        => collect(['pending', 'approved', 'disapproved'])->random(),
                     'created_by'    => $user->employee_id,
                 ]);
+
+                $leave_application->createApproverSequence($leave_application->employee_id, 'leave_application');
             }
         }
     }
