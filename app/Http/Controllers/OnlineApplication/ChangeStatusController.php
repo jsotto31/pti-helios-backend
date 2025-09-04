@@ -16,6 +16,18 @@ class ChangeStatusController extends Controller
         $list_item = $request->approver_list_items;
         $currentApproverIndex = collect($request->approver_list_items)->search(fn($item) => $item['can_approve']);
         $currentApprover = $list_item[$currentApproverIndex];
+
+        if($request->user()->type == 'admin'){
+            $application->status = 'approved';
+        }
+
+        if($currentApprover['employee_id'] != $request->user()->employee_id){
+            return response()->json([
+                    'message' => 'You are not authorized to approve/disapprove the application from <b>' . $currentApprover['employee']['name'] . '</b>.',
+                    'errors' => [],
+            ], 422);
+        }
+
         $list_item[$currentApproverIndex]['can_approve'] = 0;
 
         $application = $currentApprover['application_type']::find($currentApprover['application_id']);

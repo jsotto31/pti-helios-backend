@@ -22,12 +22,12 @@ class DatabaseSeeder extends Seeder
         //     'password' => Hash::make("a"),
         // ]);
 
-        $user = User::find(1);
-        $token = $user->createToken('api-token')->plainTextToken;
-        dd($token);
+        // $user = User::find(1);
+        // $token = $user->createToken('api-token')->plainTextToken;
+        // dd($token);
 
-        // $this->call(DailyTimeRecordSeeder::class);
-        // $this->call(ApprovalSequenceSetupSeeder::class);
-        // $this->call(LeaveApplicationSeeder::class);
+        $this->call(DailyTimeRecordSeeder::class);
+        $this->call(ApprovalSequenceSetupSeeder::class);
+        $this->call(LeaveApplicationSeeder::class);
     }
 }

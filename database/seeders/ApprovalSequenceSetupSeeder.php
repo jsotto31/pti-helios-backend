@@ -31,8 +31,7 @@ class ApprovalSequenceSetupSeeder extends Seeder
             foreach ($applicationTypes as $type) {
                 foreach ($approvers as $key => $approver) {
                     $data[] = [
-                        'employee_id' => $user->employee_id,
-                        'approver_id' => $approver->employee_id,
+                        'employee_id' => $approver->employee_id,
                         'type'        => $type,
                         'sequence'    => $key + 1,
                         'created_at'  => now(),

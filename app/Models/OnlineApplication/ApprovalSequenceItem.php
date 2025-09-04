@@ -12,7 +12,7 @@ class ApprovalSequenceItem extends Model
 
     protected $guarded = ['id'];
 
-    public function employee(){
+    public function approver(){
         return $this->belongsTo(User::class, 'employee_id', 'employee_id');
     }
 
