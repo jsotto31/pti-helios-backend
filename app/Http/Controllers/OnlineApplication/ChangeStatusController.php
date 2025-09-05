@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\OnlineApplication;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OnlineApplication\ChangeStatusRequest;
 use Illuminate\Http\Request;
 
 class ChangeStatusController extends Controller
@@ -10,11 +11,23 @@ class ChangeStatusController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function __invoke(ChangeStatusRequest $request)
     {
         $list_item = $request->approver_list_items;
         $currentApproverIndex = collect($request->approver_list_items)->search(fn($item) => $item['can_approve']);
         $currentApprover = $list_item[$currentApproverIndex];
+
+        if($request->user()->type == 'admin'){
+            $application->status = 'approved';
+        }
+
+        if($currentApprover['employee_id'] != $request->user()->employee_id){
+            return response()->json([
+                    'message' => 'You are not authorized to approve/disapprove the application from <b>' . $currentApprover['employee']['name'] . '</b>.',
+                    'errors' => [],
+            ], 422);
+        }
+
         $list_item[$currentApproverIndex]['can_approve'] = 0;
 
         $application = $currentApprover['application_type']::find($currentApprover['application_id']);

@@ -14,9 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
+        // User::factory(20)->create();
 
-        $this->call(OnlineApplicationSeeder::class);
         // User::factory()->create([
         //     'name' => 'Joshua Sotto',
         //     'email' => 'joshua@example.com',
@@ -26,5 +25,9 @@ class DatabaseSeeder extends Seeder
         // $user = User::find(1);
         // $token = $user->createToken('api-token')->plainTextToken;
         // dd($token);
+
+        $this->call(DailyTimeRecordSeeder::class);
+        $this->call(ApprovalSequenceSetupSeeder::class);
+        $this->call(LeaveApplicationSeeder::class);
     }
 }

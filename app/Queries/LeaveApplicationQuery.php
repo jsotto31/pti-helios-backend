@@ -16,6 +16,7 @@ trait LeaveApplicationQuery
                 "leave_applications.*",
                 "users.name"
             ])
+            ->with(['approval_sequence_items.approver'])
             ->leftJoin('users', 'users.employee_id', '=', 'leave_applications.employee_id')
             ->when($request->search, function ($query) use ($request) {
                 $search = $request->search;

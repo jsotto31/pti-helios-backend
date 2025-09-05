@@ -23,8 +23,6 @@ class DailyTimeRecordSeeder extends Seeder
 
         $this->createTimesheets();
         $this->createEmployeeSchedule();
-
-        
     }
 
     private function createTimesheets(){
