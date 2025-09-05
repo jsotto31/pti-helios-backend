@@ -16,4 +16,20 @@ class Timesheet extends Model
         'created_at' => 'date:Y-m-d',
         'updated_at' => 'date:Y-m-d',
     ];
+
+    public static function getLogsForEmployeeOnDate(int|string $employeeId, string $date): array
+    {
+        return self::forLogsBetweenDates($employeeId, $date, $date)
+            ->get(['time_in', 'time_out'])
+            ->toArray();
+    }
+
+
+    public function scopeForLogsBetweenDates($query, $employeeId, $fromDate, $toDate)
+    {
+        return $query->where('employee_id', $employeeId)
+                     ->whereBetween('work_date', [$fromDate, $toDate])
+                     ->orderBy('work_date');
+
+    }
 }

@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Dtr\EmployeeAttendanceRequest;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\Dtr\PairedLog;
-use App\Models\Schedule\EmployeeSchedule;
+use Carbon\CarbonPeriod;
 use Illuminate\Pipeline\Pipeline;
-
 
 class EmployeeAttendanceController extends Controller
 {
@@ -23,42 +21,25 @@ class EmployeeAttendanceController extends Controller
     
     public function getAttendance($employeeId, $fromDate, $toDate)
     {
-        $logs = PairedLog::forLogsBetweenDates($employeeId, $fromDate, $toDate)->get();
-
+        $from = Carbon::parse($fromDate);
+        $to = Carbon::parse($toDate);
+        $period = CarbonPeriod::create($from, $to);
         $attendance = [];
-
-        foreach ($logs as $log) {
-            $schedule = EmployeeSchedule::effectiveForDate($employeeId, $log->date)->first();
-
-            if (!$schedule) {
-                $attendance[] = [
-                    'employee_id' => $log->employee_id,
-                    'date' => $log->date,
-                    'sched_start' => null,
-                    'sched_end' => null,
-                    'time_in' => $log->time_in,
-                    'time_out' => $log->time_out,
-                    'tardy' => 0,
-                    'tardy_seconds' => 0,
-                    'undertime' => 0,
-                    'undertime_seconds' => 0,
-                    'status' => 'No Schedule',
-                ];
-            } else {
-                $result = app(PipeLine::class)
-                    ->send([$log, $schedule])
-                    ->through([
-                        \App\Pipelines\Attendance\EmployeeAttendance::class,
-                        \App\Pipelines\Attendance\EmployeeLeave::class
-                    ])
-                    ->thenReturn();
-                $attendance[] = $result;
-            }
+        foreach($period as $date){
+            $result = app(PipeLine::class)
+                ->send([$date->toDateString(), $employeeId])
+                ->through([
+                    \App\Pipelines\Attendance\EmployeeAttendance::class,
+                    \App\Pipelines\Attendance\EmployeeLeave::class,
+                    \App\Pipelines\Attendance\EmployeeOfficialBusiness::class
+                ])
+                ->thenReturn();
+            $attendance[] = $result;
         }
 
         return response()->json([
             'employee_id' => $employeeId,
-            'attendance' => $attendance,
+            'records' => $attendance,
         ]);
     }
 

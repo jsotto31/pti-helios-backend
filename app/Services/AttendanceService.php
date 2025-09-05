@@ -1,54 +1,62 @@
 <?php
-    namespace App\Services;
 
-    use Carbon\Carbon;
+namespace App\Services;
 
-    class AttendanceService
+use App\Helpers\AttendanceHelper;
+use App\Models\Timesheet;
+use App\Models\Schedule\EmployeeSchedule;
+use App\Factories\AttendanceFactory;
+use App\Models\OnlineApplication\CorrectionApplication;
+
+class AttendanceService
+{
+    /**
+     * Calculate attendance details for a given employee on a specific date.
+     *
+     * @param  string  $date
+     * @param  string|int $employeeId
+     * @return array
+     */
+    public function calculate(string $date, string $employeeId): array
     {
-        public function calculate($log, $schedule)
-        {
-            $status = 'present';
-            $lateSeconds = 0;
-            $undertimeSeconds = 0;
+        $schedules = EmployeeSchedule::effectiveForDate($employeeId, $date)->get();
+        $results = [];
 
-            $timeIn = Carbon::parse($log->time_in);
-            $timeOut = Carbon::parse($log->time_out);
+        foreach ($schedules as $schedule) {
+            // Fetch original logs
+            $timesheets = Timesheet::getLogsForEmployeeOnDate($employeeId, $date);
 
-            $scheduleStart = Carbon::parse($schedule->start);
-            $scheduleEnd = Carbon::parse($schedule->end);
-            $tardyStart = Carbon::parse($schedule->tardy_start);
-            $absentStart = Carbon::parse($schedule->absent_start);
-            $earlyDismiss = Carbon::parse($schedule->early_dismiss);
-
-            if ($timeIn->greaterThanOrEqualTo($absentStart)) {
-                $status = 'absent';
-            } elseif ($timeIn->greaterThan($tardyStart)) {
-                $status = 'late';
-                $lateSeconds = $timeIn->diffInSeconds($tardyStart);
+            // Override with corrections if available
+            $corrections = CorrectionApplication::getCorrectionsForEmployeeOnDate($employeeId, $date, "approved");
+            if (!empty($corrections)) {
+                $timesheets = AttendanceHelper::transformTimesheet($corrections);
             }
 
-            if ($timeOut->lessThan($earlyDismiss)) {
-                $status = $status === 'present' ? 'Early Dismissal' : "$status, Early Dismissal";
-            } elseif ($scheduleEnd->greaterThan($timeOut)) {
-                $status = 'undertime';
-                $undertimeSeconds = $scheduleEnd->diffInSeconds($timeOut);
+            // Handle cases
+            if (empty($timesheets)) {
+                $results[] = AttendanceFactory::makeDefault(
+                    $employeeId,
+                    $date,
+                    'No Logs',
+                    null,
+                    null,
+                    $schedule->start,
+                    $schedule->end
+                );
+                continue;
             }
 
-            return [
-                'employee_id' => $log->employee_id,
-                'date' => $log->date,
-                'sched_start' => $scheduleStart->toTimeString(),
-                'sched_end' => $scheduleEnd->toTimeString(),
-                'time_in' => $timeIn->toTimeString(),
-                'time_out' => $timeOut->toTimeString(),
-                'tardy' => $status === 'late' ? 1 : 0,
-                'tardy_seconds' => $lateSeconds,
-                'undertime' => $status === 'undertime' ? 1 : 0,
-                'undertime_seconds' => $undertimeSeconds,
-                'status' => $status,
-            ];
+            $results[] = AttendanceFactory::makeFromScheduleAndLog(
+                $schedule,
+                collect($timesheets)->first()
+            );
         }
+
+        // No schedules case (explicit)
+        if ($schedules->isEmpty()) {
+            $results[] = AttendanceFactory::makeDefault($employeeId, $date, 'No Schedule');
+        }
+        
+        return $results;
     }
-
-
-?>
+}

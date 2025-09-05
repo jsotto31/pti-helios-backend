@@ -16,12 +16,11 @@ class EmployeeAttendance
 
     public function handle($request, Closure $next)
     {
-        [$log, $schedule] = $request;
+        [$date, $employeeId] = $request;
 
         // Call the attendance service to calculate attendance data.
-        $attendanceData = $this->attendanceService->calculate($log, $schedule);
-
+        $attendanceData = $this->attendanceService->calculate($date, $employeeId);
         // Call the next middleware in the pipeline
-        return $next([$log, $schedule, $attendanceData]);
+        return $next([$date, $employeeId, $attendanceData]);
     }
 }

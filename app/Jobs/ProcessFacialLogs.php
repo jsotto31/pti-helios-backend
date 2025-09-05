@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use App\Models\Dtr\FacialLog;
-use App\Models\Dtr\PairedLog;
+use App\Models\Timesheet;
 
 class ProcessFacialLogs implements ShouldQueue
 {
@@ -37,9 +37,9 @@ class ProcessFacialLogs implements ShouldQueue
                     $to = $logs[1]->time;
 
                     // Create paired log
-                    PairedLog::create([
+                    Timesheet::create([
                         'employee_id' => $employeeId,
-                        'date' => $date,
+                        'work_date' => $date,
                         'time_in' => $from,
                         'time_out' => $to,
                     ]);

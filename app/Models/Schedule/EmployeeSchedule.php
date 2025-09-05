@@ -5,6 +5,7 @@ namespace App\Models\Schedule;
 use Database\Factories\EmployeeScheduleFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class EmployeeSchedule extends Model
 {
@@ -48,9 +49,13 @@ class EmployeeSchedule extends Model
 
     public function scopeEffectiveForDate($query, $employeeId, $date)
     {
+        $dayName = strtolower(Carbon::parse($date)->format('l')); 
+        // e.g. "Monday" → "monday"
+
         return $query->where('employee_id', $employeeId)
-                    ->whereDate('date_effective', '<=', $date)
-                    ->orderByDesc('date_effective');
+            ->whereDate('date_effective', '<=', $date)
+            ->where('day', $dayName)
+            ->orderByDesc('date_effective');
     }
 
     public static function createOrUpdateByUniqueKeys(array $data){

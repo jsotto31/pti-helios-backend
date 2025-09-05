@@ -17,17 +17,17 @@ class EmployeeLeave
 
     public function handle($request, Closure $next)
     {
-        [$log, $schedule, $attendanceData] = $request;
+        [$date, $employeeId, $attendanceData] = $request;
 
         // Call the leave service to check for leaves
-        $leaveData = $this->leaveService->employeeLeave($log->employee_id, $log->date);
+        $leaveData = $this->leaveService->employeeLeave($employeeId, $date);
 
         // Call the next middleware in the pipeline
         return $next([
-            'log' => $log,
-            'schedule' => $schedule,
-            'attendance' => $attendanceData,
-            'leave' => $leaveData,
+            $date,
+            $employeeId,
+            $attendanceData,
+            $leaveData,
         ]);
     }
 }

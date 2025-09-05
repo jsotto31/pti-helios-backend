@@ -2,8 +2,6 @@
     namespace App\Services\OnlineApplication;
     use App\Models\OnlineApplication\LeaveApplication;
 
-    use Carbon\Carbon;
-
     class LeaveService
     {
 
